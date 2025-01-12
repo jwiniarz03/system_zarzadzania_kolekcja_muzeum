@@ -135,7 +135,7 @@ begin
             raise exception 'W galerii nr % nie znajduje sie eksponat %.', (p_parametry_dodatkowe->>'galeria_identyfikator')::integer, p_eksponat_id;
          end if;
       update historia_wystaw 
-      set data_rozpoczecia = CURRENT_DATE
+      set data_zakonczenia = CURRENT_DATE
       where eksponat_id = p_eksponat_id and data_zakonczenia is null;
    else
       raise exception 'Nieznane aktualne miejsce przebywania eksponatu %.', p_aktualne_miejsce;
@@ -204,34 +204,45 @@ $$ language 'plpgsql';
 
 
 -- 30 dniowy limit wypozyczen
-create or replace function sprawdz_30_dni () 
-returns trigger as $$ 
+CREATE OR REPLACE FUNCTION sprawdz_30_dni() 
+RETURNS trigger AS $$
 DECLARE 
-    suma INTEGER :=0;
-begin
-    select sum(DATE_PART('day', COALESCE(data_zwrotu, CURRENT_DATE) - data_wypozyczenia))
-    into suma
-    from historia_wypozyczen
-    where eksponat_id = new.eksponat_id
-      and DATE_PART('year', data_wypozyczenia) = DATE_PART('year', NEW.data_wypozyczenia);
+    suma INTEGER := 0;
+BEGIN
+    SELECT SUM((COALESCE(data_zwrotu, CURRENT_DATE) - data_wypozyczenia)::INTEGER)
+    INTO suma
+    FROM historia_wypozyczen
+    WHERE eksponat_id = NEW.eksponat_id
+      AND EXTRACT(year FROM data_wypozyczenia) = EXTRACT(year FROM NEW.data_wypozyczenia);
 
-    if suma > 30 then RAISE EXCEPTION 'Eksponat nie moze byc poza muzeum dłuzej niz 30 dni rocznie.';
-    end IF;
+    IF suma > 30 THEN 
+        RAISE EXCEPTION 'Eksponat nie może być poza muzeum dłużej niż 30 dni rocznie.';
+    END IF;
 
-    return new;
-end;
-$$ language 'plpgsql';
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+
 
 -- conajmniej 1 eksponat kazdego artysty
 create or replace function sprawdz_eskponaty_artysty_przed_wypozyczeniem ()
 returns trigger as $$
 declare 
    liczba_eksponatow INTEGER;
+   artysta_id_var INTEGER;
 begin
+   -- Pobierz artysta_id dla danego eksponatu
+   select e.artysta_id
+   into artysta_id_var
+   from eksponat e
+   where e.id = NEW.eksponat_id;
+
+   -- Sprawdź liczbę eksponatów tego artysty
    select COUNT(*) 
    into liczba_eksponatow
    from eksponat e
-   where e.artysta_id = OLD.artysta_id
+   where e.artysta_id = artysta_id_var
       and id not in (
          select eksponat_id from historia_wypozyczen 
          where data_zwrotu is null
@@ -249,19 +260,21 @@ begin
                and data_zakonczenia is null
          )
       );
-   
-   if liczba_eksponatow = 1 then raise exception 'Nie mozna wypozyczyc ostatniego dziela artysty.';
+
+   if liczba_eksponatow = 1 then 
+      raise exception 'Nie mozna wypozyczyc ostatniego dziela artysty.';
    end if;
 
    return new;
 end;
 $$ language 'plpgsql';
 
+
 -- sprawdzanie, czy istnieja dziela artysty - jesli nie to usuwamy
 create or replace function sprawdz_dziela_artysty()
 returns trigger as $$
 declare 
-   liczba_eksponatow INTEGER
+   liczba_eksponatow INTEGER;
 begin
    select COUNT(*) 
    into liczba_eksponatow
