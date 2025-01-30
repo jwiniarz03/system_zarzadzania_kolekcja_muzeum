@@ -24,13 +24,31 @@ error_reporting(E_ALL);
             $correct_login = "fajnanazwa";
             $correct_password = "tajnehaslouuu";
 
+            $link = pg_connect("host=lkdb dbname=mrbd user=ti392 password=bjulkadkulka");
+            if (!$link) {
+                die("Nie udało się połączyć z bazą danych.");
+            }
+
             if ($login == $correct_login && $password == $correct_password) {
                 echo "<h2>Zalogowano pomyślnie!</h2>";
                 echo "<h2>Witaj w sekcji pracowników muzeum!</h2><br><br>";
                 echo "<h3>Wprowadzanie informacji o eksponatach: </h3>";
                 echo "<h4>UWAGA! Jeśli dodajesz eksponat nowego artysty, 
                     musisz najpierw dodać artystę, a dopiero poźniej jego eksponat!!</h4>";
-                echo '<form action="akcje.cgi" method="GET">
+                $query = "SELECT id, artysta_id, tytul FROM eksponat";
+                $result = pg_query($link, $query);
+                echo "<h4>Istniejące eksponaty:</h4>";
+                if (pg_num_rows($result) > 0) {
+                    echo "<table border='1'><tr><th>ID Eksponatu</th><th>ID Artysty</th><th>Tytuł</th></tr>";
+        
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["artysta_id"] . "</td><td>" . $row["tytul"] . "</td></tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>Brak danych w bazie.</p>";
+                }
+                echo '<br><br><form action="akcje.cgi" method="GET">
                     <input type="hidden" name="action" value="dodaj_eksponat">
                     id eksponatu: <input type="number" name="id_eks" min="1" required><br>
                     <br>
@@ -54,7 +72,20 @@ error_reporting(E_ALL);
                 </form>';
 
                 echo "<h3>Wprowadzanie informacji o artystach: </h3>";
-                echo '<form action="akcje.cgi" method="GET">
+                $query = "SELECT id, imie, nazwisko FROM artysta";
+                $result = pg_query($link, $query);
+                echo "<h4>Istniejący artyści:</h4>";
+                if (pg_num_rows($result) > 0) {
+                    echo "<table border='1'><tr><th>ID Artysty</th><th>Imie</th><th>Nazwisko</th></tr>";
+        
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<tr><td>" . $row["id"] . "</td><td>" . $row["imie"] . "</td><td>" . $row["nazwisko"] . "</td></tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>Brak danych w bazie.</p>";
+                }
+                echo '<br><br><form action="akcje.cgi" method="GET">
                     <input type="hidden" name="action" value="dodaj_artyste">
                     id artysty: <input type="number" name="id_arty" min="1" required><br>
                     <br>
@@ -70,7 +101,20 @@ error_reporting(E_ALL);
                 </form>';
 
                 echo "<h3>Wprowadzanie informacji o galeriach: </h3>";
-                echo '<form action="akcje.cgi" method="GET">
+                $query = "SELECT identyfikator, nazwa FROM galeria";
+                $result = pg_query($link, $query);
+                echo "<h4>Istniejące galerie:</h4>";
+                if (pg_num_rows($result) > 0) {
+                    echo "<table border='1'><tr><th>Identyfikator</th><th>Nazwa</th></tr>";
+        
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<tr><td>" . $row["identyfikator"] . "</td><td>" . $row["nazwa"] . "</td></tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>Brak danych w bazie.</p>";
+                }
+                echo '<br><br><form action="akcje.cgi" method="GET">
                     <input type="hidden" name="action" value="dodaj_galerie">
                     identyfikator galerii: <input type="number" name="id_gal" min="1" required><br>
                     <br>
@@ -92,7 +136,20 @@ error_reporting(E_ALL);
                 </form>';
 
                 echo "<h3>Wprowadzanie informacji o instytucjach: </h3>";
-                echo '<form action="akcje.cgi" method="GET">
+                $query = "SELECT identyfikator, nazwa FROM instytucja";
+                $result = pg_query($link, $query);
+                echo "<h4>Istniejące instytucje:</h4>";
+                if (pg_num_rows($result) > 0) {
+                    echo "<table border='1'><tr><th>Identyfikator</th><th>Nazwa</th></tr>";
+        
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<tr><td>" . $row["identyfikator"] . "</td><td>" . $row["nazwa"] . "</td></tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>Brak danych w bazie.</p>";
+                }
+                echo '<br><br><form action="akcje.cgi" method="GET">
                     <input type="hidden" name="action" value="dodaj_instytucje">
                     identyfikator instytucji: <input type="number" name="id_inst" min="1" required><br>
                     <br>

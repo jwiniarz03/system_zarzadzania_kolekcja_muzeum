@@ -31,12 +31,26 @@ error_reporting(E_ALL);
                     <input type="submit" value="Zaloguj się">
                 </form>';
             } elseif ($role === 'odwiedzający') {
+                $link = pg_connect("host=lkdb dbname=mrbd user=ti392 password=bjulkadkulka");
                 echo "<h2>Witaj, Odwiedzajacy!</h2>";
                 echo '<form action="szukaj.cgi" method="GET">
                     <h3>Wyszukiwarka eksponatów:</h3>
                     Wprowadź tytuł eksponatu: <input type="text" name="tytul" maxlength="50" required><br><br>
                     <input type="submit" value="Szukaj">
                 </form>';
+                $query = "SELECT tytul FROM eksponat";
+                $result = pg_query($link, $query);
+                echo "<h4>Dostępne tytuły:</h4>";
+                if (pg_num_rows($result) > 0) {
+                    echo "<table border='1'><tr><th>Tytuł</th></tr>";
+        
+                    while ($row = pg_fetch_assoc($result)) {
+                        echo "<tr><td>" . $row["tytul"] . "</td></tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>Brak dostępnych tytułów.</p>";
+                }
             }
         }
     } else {
