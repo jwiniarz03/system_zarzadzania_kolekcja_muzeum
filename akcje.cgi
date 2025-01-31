@@ -141,6 +141,10 @@
                 echo "Artysta o ID {$id_arty} już istnieje.";
                 exit;
             }
+            if ($rok_sm !== null && $rok_sm <= $rok_uro) {
+                echo "Rok śmierci musi być większy niż rok urodzenia!";
+                exit;
+            }
 
             $query = "INSERT INTO artysta (id, imie, nazwisko, rok_urodzenia, rok_smierci)
                     VALUES ($1, $2, $3, $4, $5)";

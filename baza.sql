@@ -20,7 +20,7 @@ create table artysta (
    imie          varchar(20) not null,
    nazwisko      varchar(30) not null,
    rok_urodzenia integer check ( rok_urodzenia > 0 ) not null,
-   rok_smierci   integer check ( rok_smierci > 0 )
+   rok_smierci   integer check ( (rok_smierci > 0) and (rok_smierci>rok_urodzenia) )
 );
 
 -- Table: Eksponat
