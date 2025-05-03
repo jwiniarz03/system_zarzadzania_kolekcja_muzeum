@@ -1,6 +1,6 @@
 # System zarządzania kolekcją muzeum
 
-Author: Julia Winiarz
+Autor: Julia Winiarz
 
 Aplikacja wspierająca zarządzanie kolekcją muzeum sztuki – umożliwia rejestrowanie, lokalizowanie, wypożyczanie oraz przeszukiwanie eksponatów i artystów. 
 Projekt wykonany w ramach zaliczenia przedmiotu "Bazy Danych i Usługi Sieciowe" na Uniwersytecie Warszawskim.
