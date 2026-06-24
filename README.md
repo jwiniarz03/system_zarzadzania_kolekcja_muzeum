@@ -1,31 +1,14 @@
 # System zarządzania kolekcją muzeum
 
-Autor: Julia Winiarz
-
-Aplikacja wspierająca zarządzanie kolekcją muzeum sztuki – umożliwia rejestrowanie, lokalizowanie, wypożyczanie oraz przeszukiwanie eksponatów i artystów. 
-Projekt wykonany w ramach zaliczenia przedmiotu "Bazy Danych i Usługi Sieciowe" na Uniwersytecie Warszawskim.
+Projekt bazodanowy prezentujący kompleksowy proces modelowania, tworzenia i zarządzania relacyjną bazą danych. Aplikacja wspiera zarządzanie ewidencją dzieł sztuki, śledzenie historii lokalizacji oraz egzekwowanie skomplikowanych reguł biznesowych bezpośrednio na poziomie silnika bazy danych.
 
 
-## Cel projektu
+## Kluczowe funkcjonalności
 
-Celem było stworzenie systemu wspomagającego ewidencję dzieł sztuki (obrazów, rzeźb itp.) w muzeum. System obsługuje:
-
-- Wprowadzanie eksponatów, artystów, galerii i wypożyczeń.
-- Śledzenie lokalizacji i historii eksponatów.
-- Przestrzeganie ograniczeń (maks. 30 dni poza muzeum / eksponat, min. 1 dzieło każdego artysty w muzeum).
-- Udostępnianie publicznego podglądu dostępnych eksponatów (bez informacji historycznych).
-- Obsługę przez przeglądarkę internetową.
-
-
-## Technologie
-
-- PosgreSQL:  baza danych + procedury składowane
-- ERD: model związków encji (Entity-Relationship Diagram)
-- PHP – język strony internetowej
-- HTML – interfejs użytkownika (frontend strony internetowej)
-
-
-## Funkcjonalności
+- Architektura Danych (ERD): Zaprojektowanie zoptymalizowanego modelu relacyjnego (Entity-Relationship Diagram) obsługującego eksponaty, twórców, historie lokalizacji oraz instytucje wypożyczające.
+- Zaawansowany SQL i Procedury Składowane: Implementacja złożonej logiki biznesowej za pomocą zapytań i procedur bezpośrednio w systemie PostgreSQL.
+- Integracja Danych i Restrykcje (Constraints/Triggers): Ochrona spójności bazy poprzez twarde reguły walidacyjne. System automatycznie blokuje operacje niezgodne z polityką muzeum (m.in. zakaz wypożyczania eksponatu na więcej niż 30 dni w roku, wymóg pozostawienia min. jednego dzieła danego artysty w zasobach).
+- Aplikacja Webowa (CRUD): Interfejs przeglądarkowy pozwalający na łatwe dodawanie, edytowanie i zaawansowane przeszukiwanie zasobów, z uwzględnieniem podziału na widok publiczny (zwiedzający) oraz administracyjny (pracownicy).
 
 1. Dodawanie i edytowanie:
 - Eksponatów (kod, tytuł, typ, rozmiar, twórca)
@@ -43,11 +26,15 @@ Celem było stworzenie systemu wspomagającego ewidencję dzieł sztuki (obrazó
 - Każdy artysta musi mieć co najmniej 1 dzieło w muzeum
 
 
+## Technologie
+
+- Baza Danych i Logika: PostgreSQL, zaawansowany SQL, procedury składowane, modelowanie ERD
+- Warstwa Aplikacyjna (Backend / Frontend): PHP, HTML
+
+
 ## Ograniczenia i rozwój
 
-Projekt powstał jako praca zaliczeniowa i zawiera system logowania, jednak obecnie dostęp do sekcji pracownika jest możliwy tylko przy użyciu jednego, stałego loginu i hasła.
-
-W przyszłości możliwe rozszerzenia:
-- Rozbudowana kontrola uprawnień i system zarządzania użytkownikami.
-- Integracja z rzeczywistymi zasobami muzeów.
-- Generowanie statystyk i raportów.
+Obecnie aplikacja bazodanowa działa w środowisku demonstracyjnym. Sekcja administracyjna (zarządzanie eksponatami i wypożyczeniami) zabezpieczona jest podstawowym modułem logowania pracownika.
+Kierunki dalszego rozwoju architektury obejmują:
+- Rozbudowę systemu zarządzania uprawnieniami (Role-Based Access Control) na poziomie bazy danych.
+- Zaimplementowanie zautomatyzowanego modułu do generowania statystyk i analitycznych raportów z wypożyczeń (np. w postaci hurtowni danych).
